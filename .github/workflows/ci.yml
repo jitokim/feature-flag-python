@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        run: |
+          curl -Ls https://astral.sh/uv/install.sh | bash
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Create virtualenv
+        run: uv venv
+
+      - name: Install dependencies
+        run: |
+          make install
+          make install-dev
+
+      - name: Lint
+        run: make lint
+
+      - name: Run tests with pytest
+        run: make test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        run: |
+          curl -Ls https://astral.sh/uv/install.sh | bash
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Create virtualenv
+        run: uv venv
+
+      - name: Install dependencies
+        run: |
+          source .venv/bin/activate
+          make install
+
+      - name: Install security tools
+        run: |
+          source .venv/bin/activate
+          pip install pip-audit bandit
+
+      - name: Run pip-audit vulnerability check
+        run: |
+          source .venv/bin/activate
+          pip-audit
+        continue-on-error: true
+
+      - name: Run bandit security check
+        run: |
+          source .venv/bin/activate
+          bandit -r libs
+        continue-on-error: true

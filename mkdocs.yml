@@ -1,0 +1,30 @@
+site_name: Feature Flag for Python
+repo_url: https://github.com/jitokim/feature-flag-python
+repo_name: GitHub
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - toc.integrate
+    - content.code.annotate
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - codehilite
+  - pymdownx.superfences
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Advanced: advanced.md
+  - API: api.md
+  - Contributing: contributing.md
+
+plugins:
+  - search

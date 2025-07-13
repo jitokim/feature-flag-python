@@ -1,0 +1,83 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        run: |
+          curl -Ls https://astral.sh/uv/install.sh | bash
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Create virtualenv
+        run: uv venv
+
+      - name: Install dependencies
+        run: make install-dev
+
+      - name: Run linting
+        run: make lint
+
+      - name: Run tests
+        run: make test
+
+  publish:
+    name: Publish to PyPI
+    needs: test
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    environment:
+      name: release
+      url: https://pypi.org/project/feature-flag-python/
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        run: |
+          curl -Ls https://astral.sh/uv/install.sh | bash
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Create virtualenv
+        run: uv venv
+
+      - name: Install dependencies
+        run: make install-dev
+
+      - name: Run final tests
+        run: make test
+
+      - name: Build package
+        run: make build
+
+      - name: Check package quality
+        run: uv run twine check dist/*
+
+      - name: Publish to Test PyPI
+        run: make publish-test
+
+      - name: Publish to PyPI
+        run: make publish
