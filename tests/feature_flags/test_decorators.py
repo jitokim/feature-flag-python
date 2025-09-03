@@ -39,15 +39,15 @@ async def test_afeature_flag(monkeypatch, flag_enabled, expected):
 
 def test_experiment_variant(monkeypatch):
     def dummy_get_variant(experiment_id, user_id, default_variant):
-        return ExperimentVariant.TREATMENT
+        return "treatment_2"
 
     monkeypatch.setattr("libs.feature_flags.get_variant", dummy_get_variant)
 
-    @experiment_variant("exp", user_id_key="user_id", default_variant=ExperimentVariant.TREATMENT)
+    @experiment_variant("exp", user_id_key="user_id", default_variant="treatment_2")
     def func(user_id=None, experiment_variant=None):
         return experiment_variant
 
-    assert func(user_id="user") == ExperimentVariant.TREATMENT
+    assert func(user_id="user") == "treatment_2"
 
 
 @pytest.mark.asyncio

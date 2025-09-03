@@ -8,11 +8,10 @@ from typing import Any, Optional, TypeVar
 T = TypeVar("T")
 
 
-class ExperimentVariant(Enum):
-    """Experiment variant types"""
-
-    CONTROL = "control"
-    TREATMENT = "treatment"
+class ExperimentVariant:
+    """Experiment variant constants"""
+    
+    CONTROL: str = "control"
 
 
 @dataclass

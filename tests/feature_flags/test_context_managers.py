@@ -30,21 +30,21 @@ async def test_afeature_toggle(monkeypatch, enabled):
 def test_experiment_context(monkeypatch):
     def dummy_get_experiment(experiment_id, user_id, default_variant):
         return ExperimentResponse(
-            id=experiment_id, variant=default_variant.value, isEnabled=True, payload=None
+            id=experiment_id, variant=default_variant, isEnabled=True, payload=None
         )
 
     monkeypatch.setattr("libs.feature_flags.get_experiment", dummy_get_experiment)
-    with experiment_context("exp", "user", ExperimentVariant.TREATMENT) as resp:
-        assert resp.variant == ExperimentVariant.TREATMENT.value
+    with experiment_context("exp", "user", "treatment") as resp:
+        assert resp.variant == "treatment"
 
 
 @pytest.mark.asyncio
 async def test_aexperiment_context(monkeypatch):
     async def dummy_aget_experiment(experiment_id, user_id, default_variant):
         return ExperimentResponse(
-            id=experiment_id, variant=default_variant.value, isEnabled=True, payload=None
+            id=experiment_id, variant=default_variant, isEnabled=True, payload=None
         )
 
     monkeypatch.setattr("libs.feature_flags.aget_experiment", dummy_aget_experiment)
     async with aexperiment_context("exp", "user", ExperimentVariant.CONTROL) as resp:
-        assert resp.variant == ExperimentVariant.CONTROL.value
+        assert resp.variant == ExperimentVariant.CONTROL

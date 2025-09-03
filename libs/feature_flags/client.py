@@ -187,8 +187,8 @@ class FeatureFlagClient:
         self,
         experiment_id: str,
         user_id: str,
-        default_variant: ExperimentVariant = ExperimentVariant.CONTROL,
-    ) -> ExperimentVariant:
+        default_variant: str = ExperimentVariant.CONTROL,
+    ) -> str:
         """Get experiment variant for user
 
         Args:
@@ -205,13 +205,8 @@ class FeatureFlagClient:
             if data is None:
                 return None
 
-            variant_str = data.get("variant", default_variant.value)
+            variant = data.get("variant", default_variant)
             is_enabled = data.get("isEnabled", True)
-            try:
-                variant = ExperimentVariant(variant_str)
-            except ValueError:
-                logger.warning(f"Invalid variant value: {variant_str}")
-                variant = default_variant
 
             if not is_enabled:
                 variant = default_variant
@@ -221,7 +216,7 @@ class FeatureFlagClient:
 
             return ExperimentResponse(
                 id=data.get("id", experiment_id),
-                variant=variant.value,
+                variant=variant,
                 isEnabled=is_enabled,
                 payload=payload,
             )
@@ -233,7 +228,7 @@ class FeatureFlagClient:
         self,
         experiment_id: str,
         user_id: str,
-        default_variant: ExperimentVariant = ExperimentVariant.CONTROL,
+        default_variant: str = ExperimentVariant.CONTROL,
     ) -> ExperimentResponse:
         """Get experiment variant with configuration"""
         cache_key = f"experiment_config:{experiment_id}:{user_id}"
@@ -245,13 +240,8 @@ class FeatureFlagClient:
             if data is None:
                 return None
 
-            variant_str = data.get("variant", default_variant.value)
+            variant = data.get("variant", default_variant)
             is_enabled = data.get("isEnabled", True)
-            try:
-                variant = ExperimentVariant(variant_str)
-            except ValueError:
-                logger.warning(f"Invalid variant value: {variant_str}")
-                variant = default_variant
 
             if not is_enabled:
                 variant = default_variant
@@ -261,14 +251,14 @@ class FeatureFlagClient:
 
             return ExperimentResponse(
                 id=data.get("id", experiment_id),
-                variant=variant.value,
+                variant=variant,
                 isEnabled=is_enabled,
                 payload=payload,
             )
 
         result = self._get_cached_or_fetch(cache_key, fetch)
         return result or ExperimentResponse(
-            id=experiment_id, variant=default_variant.value, isEnabled=False, payload=None
+            id=experiment_id, variant=default_variant, isEnabled=False, payload=None
         )
 
     # Async methods
@@ -332,13 +322,8 @@ class FeatureFlagClient:
             if data is None:
                 return None
 
-            variant_str = data.get("variant", default_variant.value)
+            variant = data.get("variant", default_variant)
             is_enabled = data.get("isEnabled", True)
-            try:
-                variant = ExperimentVariant(variant_str)
-            except ValueError:
-                logger.warning(f"Invalid variant value: {variant_str}")
-                variant = default_variant
 
             if not is_enabled:
                 variant = default_variant
@@ -348,7 +333,7 @@ class FeatureFlagClient:
 
             return ExperimentResponse(
                 id=data.get("id", experiment_id),
-                variant=variant.value,
+                variant=variant,
                 isEnabled=is_enabled,
                 payload=payload,
             )
@@ -360,7 +345,7 @@ class FeatureFlagClient:
         self,
         experiment_id: str,
         user_id: str,
-        default_variant: ExperimentVariant = ExperimentVariant.CONTROL,
+        default_variant: str = ExperimentVariant.CONTROL,
     ) -> ExperimentResponse:
         """Get experiment variant with configuration (async)"""
         cache_key = f"experiment_config:{experiment_id}:{user_id}"
@@ -372,13 +357,8 @@ class FeatureFlagClient:
             if data is None:
                 return None
 
-            variant_str = data.get("variant", default_variant.value)
+            variant = data.get("variant", default_variant)
             is_enabled = data.get("isEnabled", True)
-            try:
-                variant = ExperimentVariant(variant_str)
-            except ValueError:
-                logger.warning(f"Invalid variant value: {variant_str}")
-                variant = default_variant
 
             if not is_enabled:
                 variant = default_variant
@@ -388,14 +368,14 @@ class FeatureFlagClient:
 
             return ExperimentResponse(
                 id=data.get("id", experiment_id),
-                variant=variant.value,
+                variant=variant,
                 isEnabled=is_enabled,
                 payload=payload,
             )
 
         result = await self._get_cached_or_fetch_async(cache_key, fetch)
         return result or ExperimentResponse(
-            id=experiment_id, variant=default_variant.value, isEnabled=False, payload=None
+            id=experiment_id, variant=default_variant, isEnabled=False, payload=None
         )
 
     async def close(self):
@@ -444,7 +424,7 @@ def get_feature(flag_id: str, default_enabled: bool = False) -> FeatureFlagRespo
 
 
 def get_experiment(
-    experiment_id: str, user_id: str, default_variant: ExperimentVariant = ExperimentVariant.CONTROL
+    experiment_id: str, user_id: str, default_variant: str = ExperimentVariant.CONTROL
 ) -> ExperimentResponse:
     """Get experiment variant with config
 
@@ -459,7 +439,7 @@ def get_experiment(
 
 
 def get_variant(
-    experiment_id: str, user_id: str, default_variant: ExperimentVariant = ExperimentVariant.CONTROL
+    experiment_id: str, user_id: str, default_variant: str = ExperimentVariant.CONTROL
 ) -> ExperimentVariant:
     """Get experiment variant
 
@@ -495,7 +475,7 @@ async def aget_feature(flag_id: str, default_enabled: bool = False) -> FeatureFl
 
 
 async def aget_experiment(
-    experiment_id: str, user_id: str, default_variant: ExperimentVariant = ExperimentVariant.CONTROL
+    experiment_id: str, user_id: str, default_variant: str = ExperimentVariant.CONTROL
 ) -> ExperimentResponse:
     """Get experiment variant with config (async)
 
@@ -510,7 +490,7 @@ async def aget_experiment(
 
 
 async def aget_variant(
-    experiment_id: str, user_id: str, default_variant: ExperimentVariant = ExperimentVariant.CONTROL
+    experiment_id: str, user_id: str, default_variant: str = ExperimentVariant.CONTROL
 ) -> ExperimentVariant:
     """Get experiment variant (async)
 

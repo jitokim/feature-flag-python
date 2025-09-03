@@ -56,7 +56,7 @@ def test_get_experiment_config(monkeypatch, client):
     )
     resp = client.get_experiment_config("exp", "user")
     assert isinstance(resp, ExperimentResponse)
-    assert resp.variant == ExperimentVariant.TREATMENT.value
+    assert resp.variant == "treatment"
     # assert resp.config == {"bar": 2}  # config는 더 이상 없음
 
 
@@ -91,11 +91,11 @@ def test_get_experiment_global(monkeypatch):
         FeatureFlagClient,
         "get_experiment_config",
         lambda self, exp_id, user_id, default_variant=ExperimentVariant.CONTROL: ExperimentResponse(
-            id=exp_id, variant=ExperimentVariant.TREATMENT.value, isEnabled=True, payload=None
+            id=exp_id, variant="treatment", isEnabled=True, payload=None
         ),
     )
     resp = get_experiment("exp", "user")
-    assert resp.variant == ExperimentVariant.TREATMENT.value
+    assert resp.variant == "treatment"
 
 
 def test_get_variant_global(monkeypatch):
@@ -106,10 +106,10 @@ def test_get_variant_global(monkeypatch):
         lambda self,
         exp_id,
         user_id,
-        default_variant=ExperimentVariant.CONTROL: ExperimentVariant.TREATMENT,
+        default_variant=ExperimentVariant.CONTROL: "treatment",
     )
     resp = get_variant("exp", "user")
-    assert resp == ExperimentVariant.TREATMENT
+    assert resp == "treatment"
 
 
 def test_client_init_env(monkeypatch):
