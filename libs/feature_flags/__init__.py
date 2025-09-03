@@ -32,7 +32,7 @@ from .decorators import aexperiment_variant, afeature_flag, experiment_variant, 
 from .exceptions import FeatureFlagError, FeatureFlagServerError, FeatureFlagTimeout
 from .types import ExperimentResponse, ExperimentVariant, FeatureFlagResponse
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Jihoon Kim"
 __email__ = "pigberger70@gmail.com"
 
