@@ -12,9 +12,7 @@ def test_feature_flag_response():
 
 
 def test_experiment_response():
-    resp = ExperimentResponse(
-        id="exp-ab-1", variant="treatment", isEnabled=True, payload=None
-    )
+    resp = ExperimentResponse(id="exp-ab-1", variant="treatment", isEnabled=True, payload=None)
     assert resp.variant == "treatment"
     assert resp.isEnabled is True
     assert resp.payload is None

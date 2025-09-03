@@ -103,10 +103,7 @@ def test_get_variant_global(monkeypatch):
     monkeypatch.setattr(
         FeatureFlagClient,
         "get_experiment_variant",
-        lambda self,
-        exp_id,
-        user_id,
-        default_variant=ExperimentVariant.CONTROL: "treatment",
+        lambda self, exp_id, user_id, default_variant=ExperimentVariant.CONTROL: "treatment",
     )
     resp = get_variant("exp", "user")
     assert resp == "treatment"

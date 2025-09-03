@@ -2,7 +2,6 @@
 
 import json
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any, Optional, TypeVar
 
 T = TypeVar("T")
@@ -10,7 +9,7 @@ T = TypeVar("T")
 
 class ExperimentVariant:
     """Experiment variant constants"""
-    
+
     CONTROL: str = "control"
 
 
